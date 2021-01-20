@@ -12,11 +12,11 @@
 using namespace std;
 
 
+
 int* GraphColoring(int** Matrix, const unsigned int size)
 {
 
 	int* ColorArray = NULL; // возвращаемый массив цветов, индексы - номера вершин, значени€ - присвоенный цвет
-	unsigned int r = 1; // счЄтчик цветов
 	if( !(ColorArray = (int*)calloc(size, sizeof(int))) )
 			exit(EXIT_FAILURE);
 
@@ -67,7 +67,7 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 				}
 			}
 			if(!TargetColor) // если такого цвета нет в буфере, создаЄм новый цвет и красим в него i-ю вершину
-				TargetColor = ++r;
+				TargetColor = buf[buf.size() - 1] + 1;
 			ColorArray[i] = TargetColor;
 			}
 		else {
@@ -85,16 +85,16 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setlocale(LC_ALL, "Rus");
-	//srand(time(NULL));
+	srand(time(NULL));
 	unsigned int size = 0; // число вершин графа
 	int** G = NULL; // матрица смежности
 	int* color = NULL; // массив цветов
 
 	/* ¬водим число вершин */
-/*	printf("¬ведите количество вершин графа: ");
+	printf("¬ведите количество вершин графа: ");
 	scanf("%d", &size);
-	fflush(stdin); */
-	size = 7; // TODO: Delete
+	fflush(stdin);
+	//size = 7;
 	/* »нициализируем матрицу смежности */
 	if( !(G = (int**)malloc(size * sizeof(int*))) )
 			exit(EXIT_FAILURE);
