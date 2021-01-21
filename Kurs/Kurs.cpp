@@ -30,7 +30,7 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 	for(unsigned int i = 1; i < size; i++) {
 		static vector<int> buf; // локальный вектор-буфер
 
-		/* Каждую итерацию этот цикл составляет вектор всех вершин, смежных i-ой */
+		/* Каждую итерацию этот цикл составляет вектор цветов всех вершин, смежных i-ой */
 		for(unsigned int k = 0; k < size; k++) {
 			if(Matrix[i][k]) {
 				buf.push_back(ColorArray[k]);
@@ -98,7 +98,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf("Введите количество вершин графа: ");
 	scanf("%d", &size);
 	fflush(stdin);
-	//size = 7; 
 	/* Инициализируем матрицу смежности */
 	if( !(G = (int**)malloc(size * sizeof(int*))) )
 			exit(EXIT_FAILURE);
@@ -137,13 +136,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	getch();
 	return 0;
 }
-
-	/*					Тестовая Матрица
-					  0, 0, 1, 1, 0, 1, 1,
-					  0, 0, 1, 0, 0, 0, 1, 
-					  1, 1, 0, 1, 1, 1, 1, 
-					  1, 0, 1, 0, 0, 0, 0, 
-					  0, 0, 1, 0, 0, 1, 1, 
-					  1, 0, 1, 0, 1, 0, 1, 
-					  1, 1, 1, 0, 1, 1, 0,
-	*/
