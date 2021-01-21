@@ -18,6 +18,7 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
 
 
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы
