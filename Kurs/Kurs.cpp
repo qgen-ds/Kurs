@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 
+
+
 using namespace std;
 
 
@@ -37,7 +39,7 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 			}
 		}
 
-		if(buf.size()) { // если размер буфера равен 0, то вершина изолирована
+		if(!buf.empty()) { // если буфер пустой, то вершина изолирована
 			
 			/* Сортируем буфер по возрастанию цветов */
 			while (1) { // проходим по массиву, пока не отсортирован
@@ -54,7 +56,7 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 				if(!operated) break;
 			}
 
-			/* Проверка на разрыв между 0 (отсутствие цвета) в буфере и минимальным элементом буфера.
+			/* Проверка на разрыв между 0 (отсутствие цвета) и минимальным элементом буфера.
 			   Если есть разрыв хотя бы в единицу, красим i-ю вершину в цвет 1. */
 			if(buf[0] >= 2) {
 				ColorArray[i] = 1;
@@ -64,7 +66,7 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 
 			/* Этот цикл находит минимальный неиспользованный цвет в буфере */
 			int TargetColor = 0; // Собственно искомый цвет
-			for(int j = 1; j < buf.size(); j++) {
+			for(unsigned int j = 1; j < buf.size(); j++) {
 				if((buf[j] - buf[j - 1]) >= 2) {
 					TargetColor = buf[j - 1]  + 1;
 					break;
@@ -132,7 +134,46 @@ int _tmain(int argc, _TCHAR* argv[])
 	for(unsigned int j = 0; j < size; j++) {
 		printf("%d ", color[j]);
 	}
-
-	getch();
-	return 0;
+	
+	/* Вывод в файл */
+	char in = 0;
+	char FName[260] = {0};
+	FILE* File = NULL;
+	while(1) {
+		printf("\nСохранить результат в файл? (Y/N): ");
+		in = getche();
+		fflush(stdin);
+		switch(in) {
+			case 'Y':
+			case 'y':
+				printf("\nВведите имя файла: ");
+				if( !(File = fopen(strcat(gets(FName), ".txt"), "w+t")) ) {
+					printf("\nНе удалось открыть файл. Повторите попытку.");
+					strncpy(FName, "", strlen(FName));
+					in = 0;
+					continue;
+				}
+				fprintf(File, "Вершины: ");
+				for(unsigned int j = 0; j < size; j++) {
+					fprintf(File, "%d ", j);
+				}
+				fprintf(File, "\nЦвета: ");
+				for(unsigned int j = 0; j < size; j++) {
+					fprintf(File, "%d ", color[j]);
+				}
+				fclose(File);
+			case 'N':
+			case 'n':
+				free(color); color = NULL;
+				for(unsigned int i = 0; i < size; i++) {
+					free(G[i]);
+					G[i] = NULL;
+				}
+				free(G); G = NULL;
+				exit(EXIT_SUCCESS);
+			default:
+				in = 0;
+				continue;
+		};
+	}
 }
