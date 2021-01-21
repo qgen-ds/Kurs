@@ -15,7 +15,6 @@ using namespace std;
 
 int* GraphColoring(int** Matrix, const unsigned int size)
 {
-
 	int* ColorArray = NULL; // возвращаемый массив цветов, индексы - номера вершин, значения - присвоенный цвет
 	if( !(ColorArray = (int*)calloc(size, sizeof(int))) )
 			exit(EXIT_FAILURE);
@@ -26,12 +25,10 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 	локальный массив-буфер, в который записываем цвета всех смежных i-ой вершин, после чего красим
 	текущую в минимальный доступный цвет и заносим этот цвет в ColorArray.
 	   В цикле:
-			i - вершина, которую нужно покрасить;
-			k - вершина, смежная i-ой;
-
+			i - вершина, которую нужно покрасить.
 	*/
 	for(unsigned int i = 1; i < size; i++) {
-		vector<int> buf; // локальный вектор-буфер
+		static vector<int> buf; // локальный вектор-буфер
 
 		/* Каждую итерацию этот цикл составляет вектор всех вершин, смежных i-ой */
 		for(unsigned int k = 0; k < size; k++) {
@@ -57,19 +54,26 @@ int* GraphColoring(int** Matrix, const unsigned int size)
 				if(!operated) break;
 			}
 
+			/* Проверка на разрыв между 0 (отсутствие цвета) в буфере и минимальным элементом буфера.
+			   Если есть разрыв хотя бы в единицу, красим i-ю вершину в цвет 1. */
+			if(buf[0] >= 2) {
+				ColorArray[i] = 1;
+				buf.clear();
+				continue;
+			}
+
 			/* Этот цикл находит минимальный неиспользованный цвет в буфере */
 			int TargetColor = 0; // Собственно искомый цвет
-
 			for(int j = 1; j < buf.size(); j++) {
 				if((buf[j] - buf[j - 1]) >= 2) {
 					TargetColor = buf[j - 1]  + 1;
 					break;
 				}
 			}
-			if(!TargetColor) // если такого цвета нет в буфере, создаём новый цвет и красим в него i-ю вершину
+			if(!TargetColor) // если такого цвета нет в буфере, то создаём новый цвет и красим в него i-ю вершину
 				TargetColor = buf[buf.size() - 1] + 1;
 			ColorArray[i] = TargetColor;
-			}
+		}
 		else {
 			ColorArray[i] = 1; // красим все изолированные вершины в цвет 1
 		}
@@ -94,7 +98,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf("Введите количество вершин графа: ");
 	scanf("%d", &size);
 	fflush(stdin);
-	//size = 7;
+	//size = 7; 
 	/* Инициализируем матрицу смежности */
 	if( !(G = (int**)malloc(size * sizeof(int*))) )
 			exit(EXIT_FAILURE);
