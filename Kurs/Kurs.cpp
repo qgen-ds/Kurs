@@ -18,27 +18,68 @@ int _tmain(int argc, _TCHAR* argv[])
 	int** G = NULL; // матрица смежности
 	int* color = NULL; // массив цветов
 
-	/* Вводим число вершин */
-	printf("Введите количество вершин графа: ");
-	scanf("%d", &size);
-	fflush(stdin);
-	/* Инициализируем матрицу смежности */
-	if( !(G = (int**)malloc(size * sizeof(int*))) )
-			exit(EXIT_FAILURE);
-	for(unsigned int i = 0; i < size; i++) {
-		if( !(G[i] = (int*)malloc(size * sizeof(int))) )
-			exit(EXIT_FAILURE);
-	}
-	for(unsigned int i = 0; i < size; i++) {
-		for(unsigned int j = 0; j < size; j++) {
-			if(i != j) {
-				G[i][j] = rand() % 2;
-				G[j][i] = G[i][j];
-			}
-			else {
-				G[i][j] = 0;
-			}
-		}
+	/* Ввод графа */
+	char in = 0;
+	char FName[260] = {0};
+	FILE* File = NULL;
+	while(1) {
+		int* buf = NULL;
+		printf("Ввести граф из файла? (Y/N): ");
+		in = _getche();
+		fflush(stdin);
+		switch(in) {
+			case 'Y':
+			case 'y':
+				printf("\nВведите имя файла: ");
+				if( !(File = fopen(strcat(gets(FName), ".txt"), "rt")) ) {
+					printf("\nНе удалось открыть файл. Повторите попытку.");
+					strncpy(FName, "", strlen(FName));
+					in = 0;
+					continue;
+				}
+				fseek(File, 0, SEEK_END);
+				size = ftell(File);
+				rewind(File);
+				if(feof(File)) printf("eof");
+				if( !(buf = (int*)malloc(size * sizeof(int))) )
+					exit(EXIT_FAILURE);
+				for(unsigned int i = 0; i < size; i++) {
+					fscanf(File, "%d", &buf[i]);
+					printf("%d ", buf[i]);
+				}
+				free(buf); buf = NULL;
+				fclose(File); File = NULL;
+				break;
+			case 'N':
+			case 'n':
+				/* Вводим число вершин */
+				printf("Введите количество вершин графа: ");
+				scanf("%d", &size);
+				fflush(stdin);
+				/* Инициализируем матрицу смежности */
+				if( !(G = (int**)malloc(size * sizeof(int*))) )
+					exit(EXIT_FAILURE);
+				for(unsigned int i = 0; i < size; i++) {
+					if( !(G[i] = (int*)malloc(size * sizeof(int))) )
+						exit(EXIT_FAILURE);
+				}
+				for(unsigned int i = 0; i < size; i++) {
+					for(unsigned int j = 0; j < size; j++) {
+						if(i != j) {
+							G[i][j] = rand() % 2;
+							G[j][i] = G[i][j];
+						}
+						else {
+							G[i][j] = 0;
+						}
+					}
+				}
+				break;
+			default:
+				in = 0;
+				continue;
+		};
+		break;
 	}
 	/* Выводим матрицу на экран */
 	for(unsigned int i = 0; i < size; i++) {
@@ -58,9 +99,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	
 	/* Вывод в файл */
-	char in = 0;
-	char FName[260] = {0};
-	FILE* File = NULL;
+	in = 0;
+	strncpy(FName, "", strlen(FName));
 	while(1) {
 		printf("\nСохранить результат в файл? (Y/N): ");
 		in = _getche();
