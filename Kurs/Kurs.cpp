@@ -23,8 +23,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	char FName[260] = {0};
 	FILE* File = NULL;
 	while(1) {
-		int* buf = NULL;
-		printf("Ввести граф из файла? (Y/N): ");
+		static vector<int> buf;
+		printf("\nВвести граф из файла? (Y/N): ");
 		in = _getche();
 		fflush(stdin);
 		switch(in) {
@@ -40,15 +40,32 @@ int _tmain(int argc, _TCHAR* argv[])
 				fseek(File, 0, SEEK_END);
 				size = ftell(File);
 				rewind(File);
-				if(feof(File)) printf("eof");
-				if( !(buf = (int*)malloc(size * sizeof(int))) )
+				if(!size) {
+					printf("\nФайл пуст. Повторите попытку");
+					continue;
+				}
+				else 
+					size = 0;
+				 do {
+					static int b = 0;
+					fscanf(File, "%d", &b);
+					buf.push_back(b);
+					size++;
+				} while(!feof(File));
+				fclose(File); File = NULL;
+				size = sqrt((float)size);
+				if( !(G = (int**)malloc(size * sizeof(int*))) )
 					exit(EXIT_FAILURE);
 				for(unsigned int i = 0; i < size; i++) {
-					fscanf(File, "%d", &buf[i]);
-					printf("%d ", buf[i]);
+					if( !(G[i] = (int*)malloc(size * sizeof(int))) )
+						exit(EXIT_FAILURE);
 				}
-				free(buf); buf = NULL;
-				fclose(File); File = NULL;
+
+				for(unsigned int i = 0; i < size; i++) {
+					for(unsigned int j = 0; j < size; j++) {
+						G[i][j] = buf[i * size + j];
+					}
+				}
 				break;
 			case 'N':
 			case 'n':
@@ -79,6 +96,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				in = 0;
 				continue;
 		};
+		buf.clear();
 		break;
 	}
 	/* Выводим матрицу на экран */
